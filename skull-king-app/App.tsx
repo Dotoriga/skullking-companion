@@ -12,8 +12,8 @@ import { ScoreBoardScreen } from './src/screens/ScoreBoardScreen';
 import { EndScreen } from './src/screens/EndScreen';
 import { HistoryScreen } from './src/screens/HistoryScreen';
 import { calculateScore } from './src/utils/scoring';
-import { loadGameHistory, saveGameHistory } from './src/utils/storage';
-import { Player, RoundData, BonusEntry, GameHistoryEntry, ScreenName } from './src/types';
+import { loadGameHistory, saveGameHistory, loadGameState, saveGameState, clearGameState } from './src/utils/storage';
+import { Player, RoundData, BonusEntry, GameHistoryEntry, GameState, ScreenName } from './src/types';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,10 +30,14 @@ export default function App() {
   const [rounds, setRounds] = useState<RoundData[]>([]);
   const [bids, setBids] = useState<number[]>([]);
   const [gameHistory, setGameHistory] = useState<GameHistoryEntry[]>([]);
+  const [hasActiveGame, setHasActiveGame] = useState(false);
 
-  // Load history on mount
+  // Load history + active game on mount
   useEffect(() => {
     loadGameHistory().then(setGameHistory);
+    loadGameState().then(state => {
+      if (state) setHasActiveGame(true);
+    });
   }, []);
 
   // Save history when it changes
@@ -71,12 +75,33 @@ export default function App() {
     return () => handler.remove();
   }, [screen]);
 
+  const resumeGame = useCallback(() => {
+    loadGameState().then(state => {
+      if (state) {
+        setPlayers(state.players);
+        setCurrentRound(state.currentRound);
+        setRounds(state.rounds);
+        setBids(state.bids);
+        setScreen(state.screen);
+      }
+    });
+  }, []);
+
   const startGame = useCallback((p: Player[]) => {
     setPlayers(p);
     setCurrentRound(1);
     setRounds([]);
     setScreen('bid');
   }, []);
+
+  // Save game state whenever game progresses
+  useEffect(() => {
+    if (screen === 'bid' || screen === 'result' || screen === 'scores') {
+      const state: GameState = { players, currentRound, rounds, bids, screen };
+      saveGameState(state);
+      setHasActiveGame(true);
+    }
+  }, [screen, players, currentRound, rounds, bids]);
 
   const submitBids = useCallback((b: number[]) => {
     setBids(b);
@@ -112,6 +137,8 @@ export default function App() {
       }),
     };
     setGameHistory(prev => [entry, ...prev]);
+    clearGameState();
+    setHasActiveGame(false);
     setScreen('end');
   }, [players, rounds]);
 
@@ -124,6 +151,7 @@ export default function App() {
         {screen === 'home' && (
           <HomeScreen
             onNewGame={() => setScreen('setup')}
+            onResumeGame={hasActiveGame ? resumeGame : undefined}
             onHistory={() => setScreen('history')}
             historyCount={gameHistory.length}
           />
@@ -135,6 +163,7 @@ export default function App() {
           <BidScreen
             players={players}
             round={currentRound}
+            rounds={rounds}
             onSubmitBids={submitBids}
             onBack={() => setScreen('scores')}
           />
@@ -143,6 +172,7 @@ export default function App() {
           <ResultScreen
             players={players}
             round={currentRound}
+            rounds={rounds}
             bids={bids}
             onSubmitResults={submitResults}
             onBack={() => setScreen('bid')}

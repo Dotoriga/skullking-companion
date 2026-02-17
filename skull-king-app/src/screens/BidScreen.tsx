@@ -8,17 +8,19 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Header } from '../components/Header';
 import { GoldButton } from '../components/GoldButton';
+import { ScoreSummary } from '../components/ScoreSummary';
 import { Colors, Fonts } from '../constants/theme';
-import { Player } from '../types';
+import { Player, RoundData } from '../types';
 
 interface Props {
   players: Player[];
   round: number;
+  rounds: RoundData[];
   onSubmitBids: (bids: number[]) => void;
   onBack: () => void;
 }
 
-export function BidScreen({ players, round, onSubmitBids, onBack }: Props) {
+export function BidScreen({ players, round, rounds, onSubmitBids, onBack }: Props) {
   const [bids, setBids] = useState<number[]>(players.map(() => 0));
   const [revealed, setRevealed] = useState(false);
   const [currentPlayer, setCurrentPlayer] = useState(0);
@@ -54,6 +56,7 @@ export function BidScreen({ players, round, onSubmitBids, onBack }: Props) {
           subtitle={`${round} carte${round > 1 ? 's' : ''} en main`}
           onBack={onBack}
         />
+        <ScoreSummary players={players} rounds={rounds} />
         <View style={styles.blindContainer}>
           <Text style={styles.playerIcon}>{p.icon}</Text>
           <Text style={styles.playerName}>{p.name}</Text>
@@ -85,6 +88,7 @@ export function BidScreen({ players, round, onSubmitBids, onBack }: Props) {
   return (
     <View style={styles.container}>
       <Header title={`Manche ${round}`} subtitle="Enchères" onBack={onBack} />
+      <ScoreSummary players={players} rounds={rounds} />
       <View style={styles.revealContainer}>
         <Text style={styles.revealLabel}>
           {revealed ? 'ENCHÈRES RÉVÉLÉES' : 'PRÊTS À RÉVÉLER ?'}
@@ -147,75 +151,75 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     padding: 32,
-    gap: 20,
+    gap: 24,
   },
   playerIcon: {
-    fontSize: 48,
+    fontSize: 60,
   },
   playerName: {
     color: Colors.gold,
-    fontSize: 20,
+    fontSize: 26,
     fontFamily: Fonts.cinzel,
     textAlign: 'center',
   },
   question: {
-    color: Colors.goldAlpha(0.5),
-    fontSize: 12,
+    color: Colors.goldAlpha(0.6),
+    fontSize: 15,
     letterSpacing: 1,
   },
   bidSelector: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 20,
+    gap: 24,
     marginTop: 12,
   },
   bidButton: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: Colors.goldAlpha(0.1),
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: Colors.goldAlpha(0.12),
     borderWidth: 1,
-    borderColor: Colors.goldAlpha(0.2),
+    borderColor: Colors.goldAlpha(0.25),
     alignItems: 'center',
     justifyContent: 'center',
   },
   bidButtonText: {
-    fontSize: 24,
+    fontSize: 30,
     color: Colors.gold,
   },
   bidDisplay: {
-    width: 80,
-    height: 80,
-    borderRadius: 20,
+    width: 96,
+    height: 96,
+    borderRadius: 24,
     borderWidth: 2,
-    borderColor: Colors.goldAlpha(0.3),
-    backgroundColor: Colors.goldAlpha(0.1),
+    borderColor: Colors.goldAlpha(0.35),
+    backgroundColor: Colors.goldAlpha(0.12),
     alignItems: 'center',
     justifyContent: 'center',
   },
   bidValue: {
-    fontSize: 36,
+    fontSize: 44,
     color: Colors.gold,
     fontFamily: Fonts.cinzelBold,
   },
   progress: {
-    color: Colors.goldAlpha(0.3),
-    fontSize: 11,
+    color: Colors.goldAlpha(0.4),
+    fontSize: 14,
   },
   validateButton: {
     width: '100%',
-    maxWidth: 260,
+    maxWidth: 280,
     marginTop: 8,
   },
   revealContainer: {
     flex: 1,
     padding: 20,
-    gap: 12,
+    gap: 14,
     justifyContent: 'center',
   },
   revealLabel: {
-    color: Colors.goldAlpha(0.5),
-    fontSize: 12,
+    color: Colors.goldAlpha(0.6),
+    fontSize: 15,
     textAlign: 'center',
     letterSpacing: 2,
     marginBottom: 8,
@@ -223,28 +227,28 @@ const styles = StyleSheet.create({
   revealRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    backgroundColor: Colors.goldAlpha(0.04),
+    gap: 14,
+    backgroundColor: Colors.goldAlpha(0.06),
     borderWidth: 1,
-    borderColor: Colors.goldAlpha(0.1),
+    borderColor: Colors.goldAlpha(0.15),
     borderRadius: 14,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: 16,
+    paddingHorizontal: 20,
   },
   revealIcon: {
-    fontSize: 24,
+    fontSize: 30,
   },
   revealName: {
     flex: 1,
     color: Colors.gold,
     fontFamily: Fonts.cinzel,
-    fontSize: 15,
+    fontSize: 18,
   },
   bidBadge: {
-    width: 44,
-    height: 44,
-    borderRadius: 12,
-    backgroundColor: Colors.goldAlpha(0.1),
+    width: 52,
+    height: 52,
+    borderRadius: 14,
+    backgroundColor: Colors.goldAlpha(0.12),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -252,20 +256,20 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.gold,
   },
   bidBadgeText: {
-    fontSize: 16,
-    color: Colors.goldAlpha(0.3),
+    fontSize: 20,
+    color: Colors.goldAlpha(0.4),
     fontFamily: Fonts.cinzelBold,
   },
   bidBadgeTextRevealed: {
-    fontSize: 20,
+    fontSize: 24,
     color: Colors.bgPrimary,
   },
   footer: {
     padding: 20,
   },
   playHint: {
-    color: Colors.goldAlpha(0.4),
-    fontSize: 12,
+    color: Colors.goldAlpha(0.5),
+    fontSize: 15,
     textAlign: 'center',
   },
 });

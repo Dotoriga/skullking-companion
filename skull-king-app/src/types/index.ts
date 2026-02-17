@@ -8,6 +8,7 @@ export interface BonusType {
   label: string;
   icon: string;
   value: number;
+  maxCount: number;
 }
 
 export interface BonusEntry extends BonusType {
@@ -30,3 +31,11 @@ export interface GameHistoryEntry {
 }
 
 export type ScreenName = 'home' | 'setup' | 'bid' | 'result' | 'scores' | 'end' | 'history';
+
+export interface GameState {
+  players: Player[];
+  currentRound: number;
+  rounds: RoundData[];
+  bids: number[];
+  screen: ScreenName;
+}

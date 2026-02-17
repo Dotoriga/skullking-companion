@@ -10,7 +10,7 @@ interface Props {
 export function PhoneFrame({ children }: Props) {
   return (
     <LinearGradient
-      colors={['#0a1628', '#122040', '#0d1a30']}
+      colors={['#111d35', '#1a2a4a', '#142238']}
       locations={[0, 0.4, 1]}
       start={{ x: 0.3, y: 0 }}
       end={{ x: 0.7, y: 1 }}

@@ -40,7 +40,7 @@ export function EndScreen({ players, rounds, onHome }: Props) {
     <View style={styles.wrapper}>
       <Animated.View style={[styles.container, animatedStyle]}>
         <Text style={styles.victoryLabel}>VICTOIRE</Text>
-        <FloatingEmoji emoji="🏆" size={56} />
+        <FloatingEmoji emoji="🏆" size={72} />
         <Text style={styles.winnerName}>{sorted[0].name}</Text>
         <Text style={styles.winnerScore}>{sorted[0].total} pts</Text>
 
@@ -101,59 +101,59 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   victoryLabel: {
-    fontSize: 12,
-    color: Colors.goldAlpha(0.4),
+    fontSize: 16,
+    color: Colors.goldAlpha(0.5),
     letterSpacing: 3,
   },
   winnerName: {
-    fontSize: 28,
+    fontSize: 36,
     color: Colors.gold,
     fontFamily: Fonts.cinzelBold,
   },
   winnerScore: {
-    fontSize: 36,
+    fontSize: 44,
     color: Colors.gold,
     fontFamily: Fonts.cinzelBold,
   },
   rankingList: {
     width: '100%',
-    marginTop: 20,
-    gap: 8,
+    marginTop: 24,
+    gap: 10,
   },
   rankRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
-    borderRadius: 12,
-    backgroundColor: Colors.goldAlpha(0.03),
+    gap: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderRadius: 14,
+    backgroundColor: Colors.goldAlpha(0.05),
     borderWidth: 1,
-    borderColor: Colors.goldAlpha(0.06),
+    borderColor: Colors.goldAlpha(0.1),
   },
   rankRowFirst: {
-    backgroundColor: Colors.goldAlpha(0.12),
-    borderColor: Colors.goldAlpha(0.3),
+    backgroundColor: Colors.goldAlpha(0.15),
+    borderColor: Colors.goldAlpha(0.35),
   },
   rankMedal: {
-    width: 24,
+    width: 30,
     textAlign: 'center',
-    fontSize: 14,
-    color: Colors.goldAlpha(0.5),
+    fontSize: 18,
+    color: Colors.goldAlpha(0.6),
   },
   rankIcon: {
-    fontSize: 20,
+    fontSize: 26,
   },
   rankName: {
     flex: 1,
     color: Colors.gold,
     fontFamily: Fonts.cinzel,
-    fontSize: 14,
+    fontSize: 17,
   },
   rankScore: {
     color: Colors.gold,
     fontFamily: Fonts.cinzelBold,
-    fontSize: 18,
+    fontSize: 24,
   },
   footer: {
     padding: 20,

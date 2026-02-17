@@ -12,11 +12,12 @@ import { Colors, Fonts } from '../constants/theme';
 
 interface Props {
   onNewGame: () => void;
+  onResumeGame?: () => void;
   onHistory: () => void;
   historyCount: number;
 }
 
-export function HomeScreen({ onNewGame, onHistory, historyCount }: Props) {
+export function HomeScreen({ onNewGame, onResumeGame, onHistory, historyCount }: Props) {
   const opacity = useSharedValue(0);
   const translateY = useSharedValue(20);
 
@@ -33,13 +34,18 @@ export function HomeScreen({ onNewGame, onHistory, historyCount }: Props) {
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
       <View style={styles.logoArea}>
-        <FloatingEmoji emoji="💀" size={72} />
+        <FloatingEmoji emoji="💀" size={90} />
       </View>
       <Text style={styles.title}>SKULL KING</Text>
       <Text style={styles.subtitle}>COMPANION</Text>
 
       <View style={styles.buttons}>
-        <GoldButton onPress={onNewGame}>⚔️ Nouvelle partie</GoldButton>
+        {onResumeGame && (
+          <GoldButton onPress={onResumeGame}>▶️ Reprendre la partie</GoldButton>
+        )}
+        <GoldButton onPress={onNewGame} variant={onResumeGame ? 'secondary' : 'primary'}>
+          ⚔️ Nouvelle partie
+        </GoldButton>
         <GoldButton onPress={onHistory} variant="secondary">
           {`📜 Historique${historyCount > 0 ? ` (${historyCount})` : ''}`}
         </GoldButton>
@@ -62,29 +68,29 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   title: {
-    fontSize: 32,
+    fontSize: 40,
     color: Colors.gold,
     textAlign: 'center',
     fontFamily: Fonts.cinzelBold,
     letterSpacing: 3,
   },
   subtitle: {
-    fontSize: 13,
-    color: Colors.goldAlpha(0.5),
+    fontSize: 16,
+    color: Colors.goldAlpha(0.6),
     letterSpacing: 4,
     marginTop: -8,
   },
   buttons: {
     width: '100%',
-    maxWidth: 280,
+    maxWidth: 320,
     marginTop: 32,
-    gap: 12,
+    gap: 16,
   },
   version: {
     position: 'absolute',
     bottom: 20,
-    color: Colors.goldAlpha(0.2),
-    fontSize: 10,
+    color: Colors.goldAlpha(0.3),
+    fontSize: 12,
     letterSpacing: 1,
   },
 });

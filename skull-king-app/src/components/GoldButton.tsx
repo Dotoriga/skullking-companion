@@ -22,8 +22,8 @@ export function GoldButton({ children, onPress, disabled, small, variant = 'prim
   };
 
   const innerStyle: ViewStyle = {
-    paddingVertical: small ? 8 : 14,
-    paddingHorizontal: small ? 16 : 28,
+    paddingVertical: small ? 10 : 16,
+    paddingHorizontal: small ? 20 : 32,
     alignItems: 'center',
     justifyContent: 'center',
     borderRadius: 12,
@@ -42,7 +42,7 @@ export function GoldButton({ children, onPress, disabled, small, variant = 'prim
 
   const textStyle = {
     fontFamily: Fonts.cinzelBold,
-    fontSize: small ? 12 : 15,
+    fontSize: small ? 14 : 17,
     letterSpacing: 1.5,
     color: isPrimary
       ? Colors.bgPrimary

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import { Header } from '../components/Header';
 import { GoldButton } from '../components/GoldButton';
 import { ScoreChart } from '../components/ScoreChart';
@@ -16,6 +16,8 @@ interface Props {
 }
 
 export function ScoreBoardScreen({ players, rounds, currentRound, onNextRound, onEndGame, onBack }: Props) {
+  const [expandedRound, setExpandedRound] = useState<number | null>(rounds.length > 0 ? rounds.length - 1 : null);
+
   const cumulative = players.map((_, pi) => {
     let total = 0;
     return rounds.map(r => {
@@ -70,30 +72,47 @@ export function ScoreBoardScreen({ players, rounds, currentRound, onNextRound, o
         {/* Chart */}
         {rounds.length > 1 && <ScoreChart players={players} rounds={rounds} />}
 
-        {/* Last round detail */}
-        {lastRound && (
-          <View style={styles.detailCard}>
-            <Text style={styles.detailTitle}>{'DÉTAIL MANCHE ' + rounds.length}</Text>
-            {players.map((p, i) => {
-              const correct = lastRound.bids[i] === lastRound.tricks[i];
+        {/* All rounds history */}
+        {rounds.length > 0 && (
+          <View style={styles.historySection}>
+            <Text style={styles.historySectionTitle}>HISTORIQUE DES MANCHES</Text>
+            {[...rounds].reverse().map((r, reverseIdx) => {
+              const ri = rounds.length - 1 - reverseIdx;
+              const isExpanded = expandedRound === ri;
               return (
-                <View
-                  key={i}
-                  style={[styles.detailRow, i < players.length - 1 && styles.detailRowBorder]}
-                >
-                  <Text style={styles.detailIcon}>{p.icon}</Text>
-                  <Text style={styles.detailName}>{p.name}</Text>
-                  <Text style={styles.detailBid}>
-                    {lastRound.bids[i]}→{lastRound.tricks[i]}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.detailScore,
-                      { color: correct ? Colors.positive : Colors.negative },
-                    ]}
+                <View key={ri} style={styles.detailCard}>
+                  <TouchableOpacity
+                    onPress={() => setExpandedRound(isExpanded ? null : ri)}
+                    style={styles.detailHeader}
+                    activeOpacity={0.7}
                   >
-                    {lastRound.scores[i] >= 0 ? '+' : ''}{lastRound.scores[i]}
-                  </Text>
+                    <Text style={styles.detailTitle}>{'MANCHE ' + r.round}</Text>
+                    <Text style={styles.detailChevron}>{isExpanded ? '▲' : '▼'}</Text>
+                  </TouchableOpacity>
+                  {isExpanded && <View style={styles.detailSpacer} />}
+                  {isExpanded && players.map((p, i) => {
+                    const correct = r.bids[i] === r.tricks[i];
+                    return (
+                      <View
+                        key={i}
+                        style={[styles.detailRow, i < players.length - 1 && styles.detailRowBorder]}
+                      >
+                        <Text style={styles.detailIcon}>{p.icon}</Text>
+                        <Text style={styles.detailName}>{p.name}</Text>
+                        <Text style={styles.detailBid}>
+                          {r.bids[i]}→{r.tricks[i]}
+                        </Text>
+                        <Text
+                          style={[
+                            styles.detailScore,
+                            { color: correct ? Colors.positive : Colors.negative },
+                          ]}
+                        >
+                          {r.scores[i] >= 0 ? '+' : ''}{r.scores[i]}
+                        </Text>
+                      </View>
+                    );
+                  })}
                 </View>
               );
             })}
@@ -124,91 +143,116 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   ranking: {
-    gap: 8,
+    gap: 10,
     marginBottom: 16,
   },
   rankRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    backgroundColor: Colors.goldAlpha(0.03),
+    gap: 12,
+    backgroundColor: Colors.goldAlpha(0.05),
     borderWidth: 1,
-    borderColor: Colors.goldAlpha(0.08),
+    borderColor: Colors.goldAlpha(0.12),
     borderRadius: 14,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
   },
   rankRowFirst: {
-    backgroundColor: Colors.goldAlpha(0.1),
-    borderColor: Colors.goldAlpha(0.3),
+    backgroundColor: Colors.goldAlpha(0.14),
+    borderColor: Colors.goldAlpha(0.35),
   },
   rankMedal: {
-    fontSize: 14,
-    width: 24,
+    fontSize: 18,
+    width: 30,
     textAlign: 'center',
-    color: Colors.goldAlpha(0.5),
+    color: Colors.goldAlpha(0.6),
   },
   rankIcon: {
-    fontSize: 20,
+    fontSize: 26,
   },
   rankName: {
     flex: 1,
     color: Colors.gold,
     fontFamily: Fonts.cinzel,
-    fontSize: 14,
+    fontSize: 17,
   },
   rankScoreContainer: {
     alignItems: 'flex-end',
   },
   rankTotal: {
     color: Colors.gold,
-    fontSize: 20,
+    fontSize: 26,
     fontFamily: Fonts.cinzelBold,
   },
   rankDelta: {
-    fontSize: 10,
+    fontSize: 13,
+  },
+  historySection: {
+    marginBottom: 16,
+    gap: 8,
+  },
+  historySectionTitle: {
+    color: Colors.goldAlpha(0.5),
+    fontSize: 13,
+    letterSpacing: 1.5,
+    marginBottom: 4,
   },
   detailCard: {
-    backgroundColor: Colors.goldAlpha(0.03),
+    backgroundColor: Colors.goldAlpha(0.05),
     borderWidth: 1,
-    borderColor: Colors.goldAlpha(0.08),
+    borderColor: Colors.goldAlpha(0.12),
     borderRadius: 14,
-    padding: 14,
-    marginBottom: 16,
+    padding: 16,
+    overflow: 'hidden',
+  },
+  detailHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   detailTitle: {
-    color: Colors.goldAlpha(0.5),
-    fontSize: 10,
+    color: Colors.goldAlpha(0.7),
+    fontSize: 14,
+    fontFamily: Fonts.cinzelBold,
     letterSpacing: 1,
-    marginBottom: 8,
+  },
+  detailChevron: {
+    color: Colors.goldAlpha(0.4),
+    fontSize: 12,
+  },
+  detailSpacer: {
+    height: 1,
+    backgroundColor: Colors.goldAlpha(0.08),
+    marginTop: 10,
+    marginBottom: 2,
   },
   detailRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 6,
+    gap: 10,
+    paddingVertical: 8,
   },
   detailRowBorder: {
     borderBottomWidth: 1,
-    borderBottomColor: Colors.goldAlpha(0.06),
+    borderBottomColor: Colors.goldAlpha(0.08),
   },
   detailIcon: {
-    fontSize: 14,
+    fontSize: 18,
   },
   detailName: {
     flex: 1,
-    color: Colors.goldAlpha(0.7),
-    fontSize: 12,
+    color: Colors.goldAlpha(0.8),
+    fontSize: 15,
   },
   detailBid: {
-    fontSize: 11,
-    color: Colors.goldAlpha(0.4),
+    fontSize: 14,
+    color: Colors.goldAlpha(0.5),
     marginRight: 4,
   },
   detailScore: {
-    fontSize: 12,
+    fontSize: 15,
     fontWeight: '700',
-    minWidth: 40,
+    minWidth: 44,
     textAlign: 'right',
   },
   footer: {

@@ -81,7 +81,7 @@ export function ResultScreen({ players, round, rounds, bids, onSubmitResults, on
               </View>
             </View>
 
-            {bids[i] > 0 && (
+            {tricks[i] > 0 && (
               <View style={styles.bonusRow}>
                 {BONUS_TYPES.map((bt, bi) => {
                   const count = bonuses[i][bi].count;

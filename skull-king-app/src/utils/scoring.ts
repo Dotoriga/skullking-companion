@@ -6,12 +6,16 @@ export function calculateScore(
   bonuses: BonusEntry[],
   roundNum: number
 ): number {
+  const bonusTotal = tricks > 0
+    ? bonuses.reduce((s, b) => s + b.value * b.count, 0)
+    : 0;
+
   if (bid === 0) {
-    return tricks === 0 ? roundNum * 10 : -(roundNum * 10);
+    if (tricks === 0) return roundNum * 10;
+    return -(roundNum * 10) + bonusTotal;
   }
   if (bid === tricks) {
-    const bonusTotal = bonuses.reduce((s, b) => s + b.value * b.count, 0);
     return bid * 20 + bonusTotal;
   }
-  return -Math.abs(bid - tricks) * 10;
+  return -Math.abs(bid - tricks) * 10 + bonusTotal;
 }
